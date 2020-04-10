@@ -10,9 +10,9 @@ router.get('/notes/add', (req, res) => {
 router.post('/notes/new-note', async(req, res) => {
     const {title, description} = req.body;
     const errors = [];
-    if (!title)
+    if (!title){
         errors.push({text: 'Please enter valid title'});
-    
+    }
     if (!description)
         errors.push({text: 'Please enter valid description'});
     
