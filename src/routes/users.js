@@ -3,10 +3,21 @@ const router = express.Router();
 
 const User = require('../models/User');
 
+const passport = require('passport');
+
+//Ruta para renderizar formulario
 router.get('/users/signin', (req, res) => {
     res.render('users/signin');
 });
 
+//Ruta para recibir datos de signin
+router.post('/users/signin', passport.authenticate('local', {
+    successRedirect: '/notes',
+    failureRedirect: '/users/signin',
+    failureFlash: true
+}));
+
+//Ruta para renderizar formulario
 router.get('/users/signup', (req, res) => {
     res.render('users/signup');
 });
@@ -35,12 +46,14 @@ router.post('/users/signup', async(req, res) => {
     }
     else{
         //Looks for email coincidence
-        const emailUser = await User.findOne({email: email});
-        if (emailUser){
+        const user = await User.findOne({email: email});
+        if (user){
+            //If coincidence found
             req.flash('error_msg', "You are already registered");
             res.redirect('/users/signup');
         }
         else {
+            //If not a coincidence, create new user and save
             const newUser = new User({name, email, password});
             newUser.password = await newUser.encryptPassword(password);
             await newUser.save();
