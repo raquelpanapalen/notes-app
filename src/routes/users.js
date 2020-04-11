@@ -64,4 +64,10 @@ router.post('/users/signup', async(req, res) => {
    
 });
 
+//Ruta para terminar session y redireccionar a home
+router.get('/users/logout', (req, res) => {
+    req.logout();
+    res.redirect('/');
+});
+
 module.exports = router;
