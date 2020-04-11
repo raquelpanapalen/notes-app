@@ -64,6 +64,11 @@ router.post('/users/signup', async(req, res) => {
    
 });
 
+//Ruta para renderizar formulario
+router.get('/users/profile/:id', (req, res) => {
+    res.render('users/profile');
+});
+
 //Ruta para terminar session y redireccionar a home
 router.get('/users/logout', (req, res) => {
     req.logout();
