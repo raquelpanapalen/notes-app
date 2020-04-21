@@ -1,16 +1,17 @@
 const express = require('express');
 const router = express.Router();
 
+const { isAuthenticated } = require('../helpers/auth');
 const User = require('../models/User');
 
 const passport = require('passport');
 
-//Ruta para renderizar formulario
+//Rendering signin form
 router.get('/users/signin', (req, res) => {
     res.render('users/signin');
 });
 
-//Ruta para recibir datos de signin
+//Post info from sign in page
 router.post('/users/signin', passport.authenticate('local', {
     successRedirect: '/notes',
     failureRedirect: '/users/signin',
@@ -26,8 +27,8 @@ router.get('/users/signup', (req, res) => {
 router.post('/users/signup', async(req, res) => {
     const {name, email, password, confirm_password} = req.body;
     const errors = [];
-    if (name.length <= 0){
-        errors.push({text: 'Please Insert your Name'})
+    if (!name){
+        errors.push({text: 'Please Insert your Userame'})
     }
     if (password != confirm_password){
         errors.push({text: 'Password do not match'});
@@ -64,12 +65,44 @@ router.post('/users/signup', async(req, res) => {
    
 });
 
-//Ruta para renderizar formulario
-router.get('/users/profile/:id', (req, res) => {
-    res.render('users/profile');
+//Route to "Your profile" page
+router.get('/users/profile/:id',isAuthenticated, async(req, res) => {
+    const user = await User.findById(req.params.id);
+    res.render('users/profile', {user});
 });
 
-//Ruta para terminar session y redireccionar a home
+//Route to render "Edit profile" form
+router.get('/users/edit-profile/:id',isAuthenticated, async(req, res) => {
+    const user = await User.findById(req.params.id);
+    res.render('users/edit-profile', {user});
+});
+
+
+router.put('/users/edit-profile/:id', isAuthenticated, async (req, res) => {
+    const {name, email, description} = req.body;
+    const errors = [];
+    //comprobar errores
+    if (!name)
+        errors.push({text: 'Please Insert your Username'})
+    
+    if (!description)
+        errors.push({text: 'Please enter valid description'});
+
+    const user = await User.findById(req.params.id);
+    if (errors.length > 0){
+        res.render('users/edit-profile', {
+            errors,
+            user
+        });
+    }
+    else{
+        await User.findByIdAndUpdate(req.params.id, {name, email, description});
+        req.flash('success_msg', "Profile Updated Successfully");
+        res.redirect('/users/profile/'+req.params.id);
+    }
+});
+
+//Route to logout and redirect home
 router.get('/users/logout', (req, res) => {
     req.logout();
     res.redirect('/');
