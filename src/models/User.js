@@ -10,13 +10,13 @@ const UserSchema = new Schema({
     date: { type: Date, default: Date.now }
 });
 
-//generar contraseña cifrada
+//Encrypt 
 UserSchema.methods.encryptPassword = async (password) => {
     const salt = await bcrypt.genSalt(10);
     return bcrypt.hash(password, salt);;
 };
 
-//Compara contraseña cifrada con plaintext
+//See if there's a match decrypting password
 UserSchema.methods.matchPassword = async function(password) {
     return await bcrypt.compare(password, this.password);
 }

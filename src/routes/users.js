@@ -18,15 +18,16 @@ router.post('/users/signin', passport.authenticate('local', {
     failureFlash: true
 }));
 
-//Ruta para renderizar formulario
+//Rendering signup form
 router.get('/users/signup', (req, res) => {
     res.render('users/signup');
 });
 
-//Ruta para recibir datos de signup
+//Post info from users signup
 router.post('/users/signup', async(req, res) => {
     const {name, email, password, confirm_password} = req.body;
     const errors = [];
+    //Checking possible errors
     if (!name){
         errors.push({text: 'Please Insert your Userame'})
     }
@@ -35,6 +36,15 @@ router.post('/users/signup', async(req, res) => {
     }
     if (password.length < 8){
         errors.push({text: 'Password must be at least 8 characters long'});
+    }
+    //Checking if there are coincidences w/ other users
+    const same_username = await User.findOne({name: name});
+    if (same_username){
+        errors.push({text: "This username is already taken"});
+    }
+    const same_email = await User.findOne({email: email});
+    if (same_email){
+        errors.push({text: "This email is already in use. Please Sign in"});
     }
     if (errors.length > 0){
         res.render('users/signup', {
@@ -46,21 +56,12 @@ router.post('/users/signup', async(req, res) => {
         });
     }
     else{
-        //Looks for email coincidence
-        const user = await User.findOne({email: email});
-        if (user){
-            //If coincidence found
-            req.flash('error_msg', "You are already registered");
-            res.redirect('/users/signup');
-        }
-        else {
-            //If not a coincidence, create new user and save
-            const newUser = new User({name, email, password});
-            newUser.password = await newUser.encryptPassword(password);
-            await newUser.save();
-            req.flash('success_msg', "You are registered");
-            res.redirect('/users/signin');
-        }
+        //If everythink ok, save newUser
+        const newUser = new User({name, email, password});
+        newUser.password = await newUser.encryptPassword(password);
+        await newUser.save();
+        req.flash('success_msg', "You are registered");
+        res.redirect('/users/signin');
     }
    
 });
@@ -81,7 +82,7 @@ router.get('/users/edit-profile/:id',isAuthenticated, async(req, res) => {
 router.put('/users/edit-profile/:id', isAuthenticated, async (req, res) => {
     const {name, email, description} = req.body;
     const errors = [];
-    //comprobar errores
+    //Checking possible errors
     if (!name)
         errors.push({text: 'Please Insert your Username'})
     
@@ -95,6 +96,7 @@ router.put('/users/edit-profile/:id', isAuthenticated, async (req, res) => {
             user
         });
     }
+    //If everything ok, update w/ params
     else{
         await User.findByIdAndUpdate(req.params.id, {name, email, description});
         req.flash('success_msg', "Profile Updated Successfully");
