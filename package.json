@@ -1,7 +1,7 @@
 {
   "name": "notes-app",
   "version": "1.0.0",
-  "description": "",
+  "description": "This is a basic app that manages your notes. It is made with NodeJS, Express and MongoDB.",
   "main": "index.js",
   "scripts": {
     "dev": "nodemon src/index.js"
@@ -9,8 +9,29 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "connect-flash": "^0.1.1",
+    "express": "^4.17.1",
+    "express-handlebars": "^4.0.3",
+    "express-session": "^1.17.0",
+    "method-override": "^3.0.0",
+    "mongoose": "^5.8.9",
+    "passport": "^0.4.1",
+    "passport-local": "^1.0.0"
+  },
   "devDependencies": {
-    "handlebars": "^4.5.0",
-    "nodemon": "^2.0.2"
-  }
+    "dotenv": "^8.2.0",
+    "handlebars": "^4.7.6",
+    "nodemon": "^2.0.3",
+    "npm-check-updates": "^4.1.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/raquelpanapalen/notes-app.git"
+  },
+  "bugs": {
+    "url": "https://github.com/raquelpanapalen/notes-app/issues"
+  },
+  "homepage": "https://github.com/raquelpanapalen/notes-app#readme"
 }

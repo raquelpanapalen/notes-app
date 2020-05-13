@@ -1,7 +1,7 @@
 <div class="card mt-4 mx-auto">
     <div class = "card-body">
         <h1 class="card-title d-flex justify-content-between align-items-center">
-            Your profile <a href="/users/edit-profile/{{user._id}}/"><i class="fas fa-pencil-alt"></i></a>
+            Your profile <a href="/users/edit-profile/{{userInfo.id}}/"><i class="fas fa-pencil-alt"></i></a>
         </h1>
         <div class="card-deck">
             <div class="card">
@@ -9,13 +9,13 @@
                     <h5 class="card-title">Main info</h5>
                     <form>
                         <div class="form-group">
-                            <p>Username: </p><input disabled type="text" name="name" class="form-control" value="{{user.name}}">
+                            <p>Username: </p><input disabled type="text" name="name" class="form-control" value="{{userInfo.name}}">
                         </div>
                         <div class="form-group">
-                            <p>Email: </p><input disabled type="text" name="email" class="form-control" value="{{user.email}}">
+                            <p>Email: </p><input disabled type="text" name="email" class="form-control" value="{{userInfo.email}}">
                         </div>
                         <div class="form-group">
-                            <p>Current status:</p><textarea disabled name="description" class="form-control">{{user.description}}</textarea>
+                            <p>Current status:</p><textarea disabled name="description" class="form-control">{{userInfo.description}}</textarea>
                         </div>
                     </form>
                 </div>

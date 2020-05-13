@@ -69,13 +69,26 @@ router.post('/users/signup', async(req, res) => {
 //Route to "Your profile" page
 router.get('/users/profile/:id',isAuthenticated, async(req, res) => {
     const user = await User.findById(req.params.id);
-    res.render('users/profile', {user});
+    userInfo = {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        description: user.description
+    }
+    res.render('users/profile', {userInfo});
+    
 });
 
 //Route to render "Edit profile" form
 router.get('/users/edit-profile/:id',isAuthenticated, async(req, res) => {
     const user = await User.findById(req.params.id);
-    res.render('users/edit-profile', {user});
+    userInfo = {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        description: user.description
+    }
+    res.render('users/edit-profile', {userInfo});
 });
 
 
@@ -90,10 +103,16 @@ router.put('/users/edit-profile/:id', isAuthenticated, async (req, res) => {
         errors.push({text: 'Please enter valid description'});
 
     const user = await User.findById(req.params.id);
+    userInfo = {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        description: user.description
+    }
     if (errors.length > 0){
         res.render('users/edit-profile', {
             errors,
-            user
+            userInfo
         });
     }
     //If everything ok, update w/ params

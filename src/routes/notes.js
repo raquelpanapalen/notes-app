@@ -4,6 +4,7 @@ const router = express.Router();
 const Note = require('../models/Note');
 const { isAuthenticated } = require('../helpers/auth');
 
+//Rendering form to add new note
 router.get('/notes/add', isAuthenticated, (req, res) => {
     res.render('notes/new-note');
 });
@@ -21,9 +22,7 @@ router.post('/notes/new-note', isAuthenticated, async(req, res) => {
     
     if (errors.length > 0){
         res.render('notes/new-note', {
-            errors,
-            title,
-            description
+            errors
         });
     }
     /* Save data in database 
@@ -41,14 +40,27 @@ router.post('/notes/new-note', isAuthenticated, async(req, res) => {
 //Getting all notes by date
 router.get('/notes', isAuthenticated, async (req, res) => {
     const notes = await Note.find({user: req.user.id}).sort({date: 'desc'});
-    res.render('notes/all-notes', {notes});
-
+    const context = {
+        notesInfo: notes.map(note => {
+            return {
+                id: note._id,
+                title: note.title,
+                description: note.description
+            }
+        })
+    }
+    res.render('notes/all-notes', {notesInfo: context.notesInfo});
 });
 
 //Rendering form to edit note
 router.get('/notes/edit-note/:id', isAuthenticated, async (req, res) => {
     const note = await Note.findById(req.params.id);
-    res.render('notes/edit-note', {note});
+    noteInfo = {
+        id: note._id,
+        title: note.title,
+        description: note.description
+    }
+    res.render('notes/edit-note', {noteInfo});
 });
 
 //Post info from editing note
@@ -64,10 +76,15 @@ router.put('/notes/edit-note/:id', isAuthenticated, async (req, res) => {
 
     //if there are errors, render original note + errors
     const note = await Note.findById(req.params.id);
+    noteInfo = {
+        id: note._id,
+        title: note.title,
+        description: note.description
+    }
     if (errors.length > 0){
         res.render('notes/edit-note', {
             errors,
-            note
+            noteInfo
         });
     }
     //Updating note w/ new parameters

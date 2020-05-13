@@ -12,7 +12,7 @@ require('./database');
 require('./config/passport');
 
 //Settings
-app.set('port', process.env.PORT || 3000);
+app.set('port', process.env.PORT || 4000);
 app.set('views', path.join(__dirname, 'views'));
 app.engine('.hbs', exphbs({
     defaultLayout: 'main',
@@ -41,8 +41,13 @@ app.use((req, res, next) => {
     res.locals.error_msg = req.flash('error_msg');
     res.locals.error = req.flash('error');
     res.locals.user = req.user || null;
+    res.locals.user = {
+        name: (res.locals.user)? res.locals.user.name : null,
+        id:  (res.locals.user)? res.locals.user._id : null
+    };    
     next();
 });
+
 
 
 //Routes
